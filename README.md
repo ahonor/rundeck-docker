@@ -1,0 +1,1 @@
+Creates a launchable image for rundeck.

@@ -1,0 +1,30 @@
+name: Docker Nodes
+version: 1.1
+rundeckPluginVersion: 1.0
+author: alexh
+date: 06/29/15
+providers:
+    - name: docker-nodes
+      service: ResourceModelSource
+      plugin-type: script
+      script-interpreter: /bin/bash
+      script-file: nodes.sh
+      title: Docker Node Source
+      description: Get node data from docker
+      resource-format: resourcexml
+      config:
+        - type: String
+          name: docker_host
+          title: DOCKER_HOST
+          description: The host running the docker API service
+          default: tcp://127.0.0.1:2376
+        - type: Boolean
+          name: docker_tls_verify
+          title: DOCKER_TLS_VERIFY 
+          description: Flag to use TLS or not
+          default: true
+        - type: String
+          name: docker_cert_path
+          title: DOCKER_CERT_PATH
+          description: Path to the ceritficate file
+
