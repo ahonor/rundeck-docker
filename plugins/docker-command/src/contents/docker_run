@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# docker_run -
+#
+
+# fail fast if error or unbound variable
+set -eu
+
+# Read plugin configuration (should be set in project.properties)
+export DOCKER_HOST=$RD_CONFIG_DOCKER_HOST
+export DOCKER_TLS_VERIFY=0
+if [[ $RD_CONFIG_DOCKER_TLS_VERIFY == "true" ]]
+then
+	DOCKER_TLS_VERIFY=1
+fi
+export DOCKER_CERT_PATH=$RD_CONFIG_DOCKER_CERT_PATH
+
+# Set the docker command
+: ${DOCKER_COMMAND:=docker}
+
+# Read the plugin script command line opts set in plugin.yaml
+detatch=$1; shift
+image=$1;   shift
+
+[[ $RD_CONFIG_COMMAND == '${option.command}' ]] && RD_CONFIG_COMMAND=
+
+# Construct the options for the `docker run` command:
+
+runOpts=(--detach=${detatch})
+
+[[ -n "${RD_CONFIG_PORT:-}" ]] && runOpts=(${runOpts[*]} --publish=${RD_CONFIG_PORT})
+[[ -n "${RD_CONFIG_NAME:-}" ]] && runOpts=(${runOpts[*]} --name=${RD_CONFIG_NAME})
+
+
+IFS=","
+for envar in $@
+do
+	runOpts=(${runOpts[*]:-} --env=$envar)
+done
+
+# Execute the command
+echo "DEBUG: $DOCKER_COMMAND run ${runOpts[*]} ${image} ${RD_CONFIG_COMMAND:-}"
+$DOCKER_COMMAND run ${runOpts[*]} ${image} ${RD_CONFIG_COMMAND:-}
+
+exit $?
+# -

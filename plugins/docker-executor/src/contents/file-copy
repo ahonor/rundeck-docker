@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -eu
+
+export DOCKER_HOST=$RD_CONFIG_DOCKER_HOST
+export DOCKER_TLS_VERIFY=0
+if [[ $RD_CONFIG_DOCKER_TLS_VERIFY == "true" ]]
+then
+        DOCKER_TLS_VERIFY=1
+fi
+export DOCKER_CERT_PATH=$RD_CONFIG_DOCKER_CERT_PATH
+
+
+CONTAINER=$1
+shift
+FILE=$1
+
+[[ ! -f $FILE ]] && {
+	echo >&2 "Error copying file. File not found: $FILE"
+	exit 2
+}
+
+#DIR=${RD_NODE_SCP_DIR:?"scp-dir attribute was not set for the node $RD_NODE_NAME"}
+DIR=${RD_NODE_WORKINGDIR:=/tmp}
+
+
+docker exec -i $CONTAINER bash -c "cat >$DIR/$(basename $FILE)" < $FILE
+docker exec $CONTAINER chown $RD_NODE_USERNAME $DIR/$(basename $FILE)
+
+echo $DIR/$(basename $FILE)

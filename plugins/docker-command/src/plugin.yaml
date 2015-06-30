@@ -1,0 +1,87 @@
+name: puppet-apply-step
+version: 1.0
+rundeckPluginVersion: 1.0
+author: Alex Honor
+date: 05/21/14
+providers:
+  - name: docker-command-step
+    service: WorkflowStep
+    title: 'docker {command}'
+    description: Run a docker command on the local system.
+    plugin-type: script
+    script-interpreter: /bin/bash
+    script-file: docker_command
+    script-args: '${config.command}'
+    config:
+      - type: String
+        name: docker_host
+        title: DOCKER_HOST
+        description: The host running the docker API service
+        default: tcp://127.0.0.1:2376
+        scope: Project
+      - type: Boolean
+        name: docker_tls_verify
+        title: DOCKER_TLS_VERIFY 
+        description: Flag to use TLS or not
+        default: true
+        scope: Project
+      - type: String
+        name: docker_cert_path
+        title: DOCKER_CERT_PATH
+        description: Path to the ceritficate file
+        scope: Project
+      - type: String
+        name: command
+        title: command
+        description: the docker command to run
+      - type: String
+        name: arguments
+        title: arguments
+        description: the arguments to pass to the docker command
+  - name: docker-run-step
+    service: WorkflowStep
+    title: 'docker run'
+    description: Execute docker run command locally.
+    plugin-type: script
+    script-interpreter: /bin/bash
+    script-file: docker_run
+    script-args: '${config.detatch} ${config.image} ${config.envOpts}'
+    config:
+      - type: String
+        name: docker_host
+        title: DOCKER_HOST
+        description: The host running the docker API service
+        default: tcp://127.0.0.1:2376
+        scope: Project
+      - type: Boolean
+        name: docker_tls_verify
+        title: DOCKER_TLS_VERIFY 
+        description: Flag to use TLS or not
+        default: true
+        scope: Project
+      - type: String
+        name: docker_cert_path
+        title: DOCKER_CERT_PATH
+        description: Path to the ceritficate file
+        scope: Project
+      - type: String
+        name: command
+        title: command
+        description: The docker command to run
+      - type: String
+        name: envOpts
+        title: environment options
+        description: 'Set environment variables. (eg VAR=VALUE,VAR=VALUE)'
+      - type: String
+        name: image
+        title: image ID
+        description: The container image to run
+      - type: Boolean
+        name: detatch
+        title: detatch
+        description: Run container in background and print container ID
+        default: false
+      - type: String
+        name: publish
+        title: publish
+        description: 'Publish a container port (eg xxxx:yyyy)'

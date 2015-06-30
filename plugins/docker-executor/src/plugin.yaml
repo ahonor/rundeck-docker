@@ -27,4 +27,27 @@ providers:
           name: docker_cert_path
           title: DOCKER_CERT_PATH
           description: Path to the ceritficate file
+    - name: docker-file-copier
+      service: FileCopier
+      title: Docker Container File Copier
+      description: Copies file to the container
+      plugin-type: script
+      script-interpreter: /bin/bash
+      script-file: file-copy
+      script-args: ${node.hostname} ${file-copy.file}
+      config:
+        - type: String
+          name: docker_host
+          title: DOCKER_HOST
+          description: The host running the docker API service
+          default: tcp://127.0.0.1:2376
+        - type: Boolean
+          name: docker_tls_verify
+          title: DOCKER_TLS_VERIFY 
+          description: Flag to use TLS or not
+          default: true
+        - type: String
+          name: docker_cert_path
+          title: DOCKER_CERT_PATH
+          description: Path to the ceritficate file
 
